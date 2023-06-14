@@ -24,7 +24,7 @@ jobs:
     needs:
       - gen-random
     env:
-      PYTHON_VERSION: 3.${{ needs.gen-random.outputs.random }}.0
+      PYTHON_VERSION: 3.${{ needs.gen-random.outputs.random }}
     steps:
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4.6.1
