@@ -50,10 +50,12 @@ jobs:
           echo MY_RANDOM IS NOW SET TO: $MY_RANDOM
           [ -n "$MY_RANDOM" ]
       - name: Print the random number plus one
+        if: steps.random-step.outputs.randomval > 5
         run: ruby -e 'puts(${{ steps.random-step.outputs.randomval }} + 1)'
   use-random-on-mac:
     runs-on: macos-13
     needs:
       - gen-random
+    if: needs.gen-random.outputs.random > 10
     steps:
       - run: echo ${{ needs.gen-random.outputs.random }}
