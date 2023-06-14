@@ -107,5 +107,4 @@ jobs:
         run: git log --oneline --graph
       - name: SHALLOW
         working-directory: shallow-clone
-        run: git describe --tags
-        
+        run: git describe --tags || true
