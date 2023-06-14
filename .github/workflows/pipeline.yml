@@ -1,6 +1,7 @@
 name: My experimental pipeline
 on:
-  push
+  push:
+  workflow_dispatch:
 
 jobs:
   run-python-hello-world:
@@ -53,9 +54,22 @@ jobs:
         if: steps.random-step.outputs.randomval > 5
         run: ruby -e 'puts(${{ steps.random-step.outputs.randomval }} + 1)'
   use-random-on-mac:
-    runs-on: macos-13
+    runs-on: macos-${{ '13' }}
     needs:
       - gen-random
     if: needs.gen-random.outputs.random > 10
     steps:
       - run: echo ${{ needs.gen-random.outputs.random }}
+  test-failures:
+    runs-on: ubuntu-22.04
+    needs:
+      - gen-random
+    steps:
+      - name: Failure
+        run: exit 1
+      - name: Recovery
+        if: failure()
+        run: echo "Failure was expected"
+      - name: Recovery
+        if: always() && needs.gen-random.outputs.random > 5
+        run: echo "Failure was expected"
