@@ -84,3 +84,21 @@ jobs:
       - name: Recovery
         if: always() && needs.gen-random.outputs.random > 5
         run: echo "Failure was expected"
+  full-clone:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.5.3
+        with:
+          fetch-depth: 0
+          path: full-clone
+      - name: Checkout the repository
+        uses: actions/checkout@v3.5.3
+        with:
+          path: shallow-clone
+      - name: FULL
+        working-directory: full-clone
+        run: git log --oneline
+      - name: SHALLOW
+        working-directory: shallow-clone
+        run: git log --oneline
