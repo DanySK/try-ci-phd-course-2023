@@ -5,5 +5,5 @@ jobs:
   run-hello-world:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@96f53100ba2a5449eb71d2e6604bbcd94b9449b5
+      - uses: actions/checkout@v3.5.3
       - run: ./hello_world.py
