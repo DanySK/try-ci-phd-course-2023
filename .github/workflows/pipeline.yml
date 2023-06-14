@@ -168,6 +168,6 @@ jobs:
       - name: Deliver on dockerhub
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
-          docker login -u danysk -p '${{ secrets.DOCKERHUB_PASSWORD }}'
+          echo '${{ secrets.DOCKERHUB_PASSWORD }}' | docker login -u danysk -password-stdin
           docker push danysk/phd-course-2023-test:${{ steps.version.outputs.version }}
           docker push danysk/phd-course-2023-test:latest
