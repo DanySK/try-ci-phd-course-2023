@@ -1,9 +1,20 @@
 name: My experimental pipeline
 on:
   push:
+  pull_request:
   workflow_dispatch:
 
 jobs:
+  try-windows:
+    runs-on: windows-latest
+    steps:
+      - run: |
+          echo ${{ runner.os }}
+          echo ${{ github.event_name }}
+          echo ${{ github.event.ref }}
+      - name: Run only for PRs
+        if: github.event_name == 'pull_request'
+        run: echo "This is a PR"
   run-python-hello-world:
     runs-on: ubuntu-22.04
     steps:
