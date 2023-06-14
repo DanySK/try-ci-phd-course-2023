@@ -34,7 +34,7 @@ jobs:
     # outputs:
     #   random: ${{ steps.random-step.outputs.randomval }}
     steps:
-      - name: Set up Ruby 3.10.10
+      - name: Set up Ruby 3.0.5
         uses: ruby/setup-ruby@v1.152.0
         with:
           ruby-version: 3.0.5
@@ -51,3 +51,9 @@ jobs:
           [ -n "$MY_RANDOM" ]
       - name: Print the random number plus one
         run: ruby -e 'puts(${{ steps.random-step.outputs.randomval }} + 1)'
+  use-random-on-mac:
+    runs-on: macos-13
+    needs:
+      - gen-random
+    steps:
+      - run: echo ${{ steps.random-step.outputs.randomval }}
