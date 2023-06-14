@@ -99,6 +99,13 @@ jobs:
       - name: FULL
         working-directory: full-clone
         run: git log --oneline --graph
+      - name: FULL-V
+        working-directory: full-clone
+        run: git describe --tags
       - name: SHALLOW
         working-directory: shallow-clone
         run: git log --oneline --graph
+      - name: SHALLOW
+        working-directory: shallow-clone
+        run: git describe --tags
+        
