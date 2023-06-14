@@ -148,3 +148,26 @@ jobs:
         run: |
           echo $OMDB_API_KEY
           ./hello_world.main.kts
+
+  build-containerized-app:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.5.3
+        with:
+          fetch-depth: 0
+      - name: Compute the container version
+        id: version
+        run: echo "version=$(git describe --tags)" >> "$GITHUB_OUTPUT"
+      - name: Build the container
+        run: docker build -t "danysk/phd-course-2023-test:${{ steps.version.outputs.version }}" .
+      - name: Test the containe
+        run: docker run --rm "danysk/phd-course-2023-test:${{ steps.version.outputs.version }}"
+      - name: Also tag as latest
+        run: docker tag "danysk/phd-course-2023-test:${{ steps.version.outputs.version }}" "danysk/phd-course-2023-test:latest"
+      - name: Deliver on dockerhub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          docker login -u danysk -p '${{ secrets.DOCKERHUB_PASSWORD }}'
+          docker push danysk/phd-course-2023-test:${{ steps.version.outputs.version }}
+          docker push danysk/phd-course-2023-test:latest
