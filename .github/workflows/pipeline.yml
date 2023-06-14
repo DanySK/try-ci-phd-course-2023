@@ -29,3 +29,23 @@ jobs:
         uses: actions/checkout@v3.5.3
       - name: Run the Ruby-written hello world
         run: ./hello_world.rb
+  gen-random:
+    runs-on: ubuntu-22.04
+    # outputs:
+    #   random: ${{ steps.random-step.outputs.randomval }}
+    steps:
+      - name: Set up Ruby 3.10.10
+        uses: ruby/setup-ruby@v1.152.0
+        with:
+          ruby-version: 3.0.5
+      - name: Try with an env variable
+        run: export MY_RANDOM="$(ruby -e 'puts rand(10)')"
+      - name: Check that the env is set
+        run: |
+          echo MY_RANDOM IS NOW SET TO: $MY_RANDOM
+          [ -n "$MY_RANDOM" ]
+      - name: Generate a random number
+        id: random-step
+        run: ruby -e 'puts "randomval=#{rand(10)}"' >> "$GITHUB_OUTPUT"
+      - name: Print the random number
+        run: echo ${{ steps.random-step.outputs.randomval }}
