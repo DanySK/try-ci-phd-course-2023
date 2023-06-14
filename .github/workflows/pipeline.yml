@@ -15,16 +15,27 @@ jobs:
       - name: Run only for PRs
         if: github.event_name == 'pull_request'
         run: echo "This is a PR"
+  generate-python-versions:
+    runs-on: ubuntu-22.04
+    outputs:
+      pyversions: ${{ steps.py-versions-generator.outputs.pyversions }}
+    needs:
+      - gen-random
+    steps:
+      - name: Generate the versions of Python to test with
+        id: py-versions-generator
+        run: python -c "print(f'pyversions={list(range(5, ${{ needs.gen-random.outputs.random }} + 1))}')" >> "$GITHUB_OUTPUT"
   run-python-hello-world:
     strategy:
       fail-fast: false
       matrix:
         os: [ ubuntu-22.04, macos-13.0, windows-latest ]
+        py: ${{ fromJson(needs.generate-python-versions.outputs.pyversions) }}
     runs-on: ${{ matrix.os }}
     needs:
-      - gen-random
+      - generate-python-versions
     env:
-      PYTHON_VERSION: 3.${{ needs.gen-random.outputs.random }}
+      PYTHON_VERSION: 3.${{ matrix.py }}
     steps:
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4.6.1
@@ -62,7 +73,7 @@ jobs:
         run: export MY_RANDOM="$(ruby -e 'puts rand(10)')"
       - name: Generate a random number
         id: random-step
-        run: ruby -e 'puts "randomval=#{rand(10)}"' >> "$GITHUB_OUTPUT"
+        run: ruby -e 'puts "randomval=#{rand(5..11)}"' >> "$GITHUB_OUTPUT"
       - name: Check that the env is set
         env:
           MY_RANDOM: ${{ steps.random-step.outputs.randomval }}
