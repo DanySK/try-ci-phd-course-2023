@@ -31,8 +31,8 @@ jobs:
         run: ./hello_world.rb
   gen-random:
     runs-on: ubuntu-22.04
-    # outputs:
-    #   random: ${{ steps.random-step.outputs.randomval }}
+    outputs:
+      random: ${{ steps.random-step.outputs.randomval }}
     steps:
       - name: Set up Ruby 3.0.5
         uses: ruby/setup-ruby@v1.152.0
@@ -56,4 +56,4 @@ jobs:
     needs:
       - gen-random
     steps:
-      - run: echo ${{ steps.random-step.outputs.randomval }}
+      - run: echo ${{ needs.gen-random.outputs.random }}
