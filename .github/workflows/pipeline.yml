@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
+
   try-windows:
     runs-on: windows-latest
     steps:
@@ -15,6 +16,7 @@ jobs:
       - name: Run only for PRs
         if: github.event_name == 'pull_request'
         run: echo "This is a PR"
+
   generate-python-versions:
     runs-on: ubuntu-22.04
     outputs:
@@ -25,12 +27,18 @@ jobs:
       - name: Generate the versions of Python to test with
         id: py-versions-generator
         run: python -c "print(f'pyversions={list(range(5, ${{ needs.gen-random.outputs.random }} + 1))}')" >> "$GITHUB_OUTPUT"
+
   run-python-hello-world:
     strategy:
       fail-fast: false
       matrix:
         os: [ ubuntu-22.04, macos-13.0, windows-latest ]
         py: ${{ fromJson(needs.generate-python-versions.outputs.pyversions) }}
+        exclude:
+          - os: ubuntu-22.04
+            py: 5
+          - os: ubuntu-22.04
+            py: 6
     runs-on: ${{ matrix.os }}
     needs:
       - generate-python-versions
@@ -47,6 +55,7 @@ jobs:
         uses: actions/checkout@v3.5.3
       - name: Run the Python-written hello world
         run: ./hello_world.py
+
   run-ruby-hello-world:
     runs-on: ubuntu-22.04
     steps:
@@ -60,6 +69,7 @@ jobs:
         uses: actions/checkout@v3.5.3
       - name: Run the Ruby-written hello world
         run: ./hello_world.rb
+
   gen-random:
     runs-on: ubuntu-22.04
     outputs:
