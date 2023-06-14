@@ -16,12 +16,19 @@ jobs:
         if: github.event_name == 'pull_request'
         run: echo "This is a PR"
   run-python-hello-world:
-    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04, macos-13.0, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    needs:
+      - gen-random
+    env:
+      PYTHON_VERSION: 3.${{ needs.gen-random.outputs.random }}.0
     steps:
-      - name: Set up Python 3.10.10
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4.6.1
         with:
-          python-version: 3.10.10
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Print the version of Python
         run: python --version
       - name: Checkout the repository
@@ -71,19 +78,19 @@ jobs:
     if: needs.gen-random.outputs.random > 10
     steps:
       - run: echo ${{ needs.gen-random.outputs.random }}
-  test-failures:
-    runs-on: ubuntu-22.04
-    needs:
-      - gen-random
-    steps:
-      - name: Failure
-        run: exit 1
-      - name: Recovery
-        if: failure()
-        run: echo "Failure was expected"
-      - name: Recovery
-        if: always() && needs.gen-random.outputs.random > 5
-        run: echo "Failure was expected"
+  # test-failures:
+  #   runs-on: ubuntu-22.04
+  #   needs:
+  #     - gen-random
+  #   steps:
+  #     - name: Failure
+  #       run: exit 1
+  #     - name: Recovery
+  #       if: failure()
+  #       run: echo "Failure was expected"
+  #     - name: Recovery
+  #       if: always() && needs.gen-random.outputs.random > 5
+  #       run: echo "Failure was expected"
   full-clone:
     runs-on: ubuntu-22.04
     steps:
