@@ -98,7 +98,7 @@ jobs:
           path: shallow-clone
       - name: FULL
         working-directory: full-clone
-        run: git log --oneline
+        run: git log --oneline --graph
       - name: SHALLOW
         working-directory: shallow-clone
-        run: git log --oneline
+        run: git log --oneline --graph
