@@ -1,0 +1,8 @@
+on:
+  push
+
+jobs:
+  run-hello-world:
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "Hello, world!"
